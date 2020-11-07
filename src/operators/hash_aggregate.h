@@ -21,8 +21,7 @@
 #include "operator.h"
 #include "aggregate_const.h"
 
-namespace hustle{
-namespace operators{
+namespace hustle::operators{
 
 class HashAggregateStrategy {
 
@@ -41,6 +40,9 @@ private:
 
 };
 
+/**
+ * Distributed two-phase aggregate.
+ */
 class HashAggregate : public BaseAggregate {
   /**
    * Two-phase aggregate.
@@ -67,14 +69,14 @@ class HashAggregate : public BaseAggregate {
 
 
 public:
-  HashAggregate(const std::size_t query_id,
+  HashAggregate(std::size_t query_id,
             std::shared_ptr<OperatorResult> prev_result,
             std::shared_ptr<OperatorResult> output_result,
             std::vector<AggregateReference> aggregate_units,
             std::vector<ColumnReference> group_by_refs,
             std::vector<ColumnReference> order_by_refs);
 
-  HashAggregate(const std::size_t query_id,
+  HashAggregate(std::size_t query_id,
             std::shared_ptr<OperatorResult> prev_result,
             std::shared_ptr<OperatorResult> output_result,
             std::vector<AggregateReference> aggregate_units,
@@ -89,8 +91,6 @@ private:
   std::shared_ptr<OperatorResult> prev_result_, output_result_;
   // The new output table containing the group columns and aggregate columns.
   std::shared_ptr<Table> output_table_;
-  // The output result of each aggregate group (length = num_aggs_)
-  std::atomic<int64_t>* aggregate_data_;
   // Hold the aggregate column data (in chunks)
   std::vector<const int64_t*> aggregate_col_data_;
 
@@ -111,8 +111,6 @@ private:
   // We append each group to this after we compute the aggregate for that
   // group.
   std::shared_ptr<arrow::StructBuilder> group_builder_;
-  // Construct the group-by key. Initialized in Dynamic Depth Nested Loop.
-  std::vector<std::vector<int>> group_id_vec_;
 
   // Map group-by column name to group_index in the group_by_refs_ table.
   std::unordered_map<std::string, int> group_by_index_map_;
@@ -135,7 +133,7 @@ private:
   std::vector<HashMap *> count_maps;
   std::vector<HashMap *> value_maps;
   // Map the hash key to (chunk_id, offset).
-  phmap::parallel_flat_hash_map<hash_t, std::tuple<int, int>> * tuple_map;
+  phmap::parallel_flat_hash_map<hash_t, std::tuple<int, int>> * tuple_map{};
 
   // TODO: Construct a mapping from hash key to group-by column tuples
 
@@ -143,18 +141,33 @@ private:
   // - HashMap if the aggregate kernel is SUM, COUNT
   // - MeanHashMap if the aggregate kernel is MEAN
   // TODO: Depending on the strategy, the global_map should be polymorphic.
-  void * global_map;
+  void * global_map{};
 
   // If a thread wants to insert a group and its aggregate into group_builder_
   // and aggregate_builder_, then it must grab this mutex to ensure that the
   // groups and its aggregates are inserted at the same row.
   std::mutex mutex_;
 
-
+  // The main procedures HashAggregate will execute.
+  /**
+   * Initialize all the parameters used in the HashAggregate procedure.
+   *
+   * @param The internal task passed by the scheduler.
+   */
   void Initialize(Task* internal);
 
+  /**
+   * Entry point to enter the aggregate.
+   *
+   * @param The internal task passed by the scheduler.
+   */
   void ComputeAggregates(Task* internal);
 
+  /**
+   * Finishing up the HashAggregate and output the result.
+   *
+   * @param The internal task passed by the scheduler.
+   */
   void Finish(Task* internal);
 
   /**
@@ -181,8 +194,8 @@ private:
    *
    * @return The schema for the output table.
    */
-  std::shared_ptr<arrow::Schema> OutputSchema(AggregateKernel kernel,
-                                              const std::string& agg_col_name);
+  std::shared_ptr<arrow::Schema>
+  OutputSchema(AggregateKernel kernel, const std::string& agg_col_name);
 
   /**
    * Initialize the hash tables for the first phase of aggregate.
@@ -216,18 +229,25 @@ private:
    */
   void SecondPhaseAggregate(Task* internal);
 
+  /**
+   * Sort the result of the output table (containing groups and aggregates)
+   *
+   * @param groups Resulting group-by table produced by the second aggregate.
+   * @param aggregates Resulting aggregate column.
+   */
+  void SortResult(std::vector<arrow::Datum> &groups, arrow::Datum &aggregates);
 
-
-
-
-
-
+  /**
+   * The hash combine function used in the group-by hash tables.
+   *
+   * @param seed Result from the previously hashed-values, or a new seed.
+   * @param val The raw value of the new group-by item.
+   * @return The combined hash value of the group-by tuple.
+   */
   hash_t HashCombine(hash_t seed, hash_t val);
 
-  void SortResult(std::vector<arrow::Datum> &groups, arrow::Datum &aggregates);
 };
 
-}
 }
 
 

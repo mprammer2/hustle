@@ -88,8 +88,12 @@ HashAggregate::HashAggregate(const std::size_t query_id,
                              std::vector<ColumnReference> group_by_refs,
                              std::vector<ColumnReference> order_by_refs)
   : HashAggregate(
-        query_id, prev_result, output_result, aggregate_refs,
-        group_by_refs, order_by_refs,
+        query_id,
+        prev_result,
+        output_result,
+        aggregate_refs,
+        group_by_refs,
+        order_by_refs,
         std::make_shared<OperatorOptions>()) {}
 
 HashAggregate::HashAggregate(const std::size_t query_id,
