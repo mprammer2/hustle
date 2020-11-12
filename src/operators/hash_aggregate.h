@@ -140,7 +140,6 @@ private:
   // Global hash table handles the second phase of hashing.
   // - HashMap if the aggregate kernel is SUM, COUNT
   // - MeanHashMap if the aggregate kernel is MEAN
-  // TODO: Depending on the strategy, the global_map should be polymorphic.
   void * global_map{};
 
   // If a thread wants to insert a group and its aggregate into group_builder_

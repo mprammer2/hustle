@@ -23,6 +23,7 @@
 
 namespace hustle::operators {
 
+#define AGGREGATE_OUTPUT_TABLE "aggregate"
 
 // Types of aggregates we can perform. COUNT is currently not supported.
 enum AggregateKernel { SUM, COUNT, MEAN };
