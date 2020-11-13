@@ -245,6 +245,8 @@ private:
    */
   hash_t HashCombine(hash_t seed, hash_t val);
 
+  template<typename ChunkT>
+  hash_t NextKey(ChunkT &chunk);
 };
 
 }
