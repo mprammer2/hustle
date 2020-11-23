@@ -21,10 +21,11 @@
 
 namespace hustle::operators {
 
-AggregateWorkload::AggregateWorkload(int cardinality, int numGroupby) {
+AggregateWorkload::AggregateWorkload(int cardinality, int numGroupby, int scaleFactor) {
 
   this->cardinality = cardinality;
   this->num_group_by = numGroupby;
+  this->scale_factor_ = scaleFactor;
 
   auto aggregate_parallel_factor = std::thread::hardware_concurrency();
   this->num_threads_ = aggregate_parallel_factor;
@@ -34,7 +35,6 @@ AggregateWorkload::AggregateWorkload(int cardinality, int numGroupby) {
 
   this->scheduler = std::make_shared<Scheduler>(num_threads_, true);
 };
-
 
 void AggregateWorkload::prepareData() {
 
@@ -48,9 +48,12 @@ void AggregateWorkload::prepareData() {
     std::shared_ptr<arrow::Int64Array> col;
 
     arrow::Int64Builder builder;
-    builder.Reserve(cardinality);
+    builder.Reserve(cardinality * scale_factor_);
+
     for (int j = 0; j < cardinality; ++j) {
-      builder.UnsafeAppend(j);
+      for (int k = 0; k < scale_factor_; ++k) {
+        builder.UnsafeAppend(j);
+      }
     }
     builder.Finish(&col);
 
@@ -65,8 +68,10 @@ void AggregateWorkload::prepareData() {
   inputTable->insert_records(inputData);
 }
 
+
+
 std::string
-AggregateWorkload::eventName(AggregateType t, const std::string & name) {
+AggregateWorkload::eventName(AggregateType t, const std::string &name) {
   if (t == AggregateType::ARROW_AGGREGATE) {
     return name + "_arrow";
   } else if (t == AggregateType::HASH_AGGREGATE) {
@@ -104,7 +109,9 @@ void AggregateWorkload::q1(AggregateType agg_type) {
 
   auto container = simple_profiler.getContainer();
   auto name = "Q1_" + std::to_string(cardinality) + "*" +
-                      std::to_string(num_group_by);
+              std::to_string(num_group_by) + "*" +
+              std::to_string(scale_factor_);
+
   auto eventName = this->eventName(agg_type, name);
   scheduler->addTask(&plan);
   container->startEvent(eventName);

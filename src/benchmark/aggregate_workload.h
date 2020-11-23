@@ -30,11 +30,18 @@ namespace hustle::operators {
 class AggregateWorkload {
 public:
 
-  explicit AggregateWorkload(int cardinality, int numGroupby);
-  void setPrint(bool shouldPrint){print_ = shouldPrint;}
+
+  explicit AggregateWorkload(int cardinality, int numGroupby, int scaleFactor);
+
+  void setPrint(bool shouldPrint){ print_ = shouldPrint;}
+
 
   void prepareData();
 
+  /**
+   * SELECT mean(agg_col) GROUP BY Col1, Col2, ..., Col[N];
+   * @param agg_type
+   */
   void q1(AggregateType agg_type);
 
 
@@ -43,6 +50,7 @@ private:
   int cardinality;
   int num_group_by;
   int num_threads_;
+  int scale_factor_;
   std::shared_ptr<Scheduler> scheduler;
 
   std::shared_ptr<OperatorOptions> aggregate_options;
@@ -52,6 +60,7 @@ private:
   std::vector<std::shared_ptr<arrow::ArrayData>> inputData;
 
   std::string eventName(AggregateType t, const std::string &name);
+
 };
 
 

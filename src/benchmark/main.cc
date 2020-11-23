@@ -264,7 +264,7 @@ int get_test(int argc, char *argv[]) {
   int bench_type = SSB_WORKLOAD;
   for (int i = 1; i < argc; i++) {
     auto s = std::string(argv[i]);
-    if (s == "--agg_op") {
+    if (s == "--benchmark") {
       if (i + 1 >= argc) {
         std::cerr << "Expect aggregate operator!" << std::endl;
         exit(1);
@@ -320,30 +320,39 @@ int ssb_main(int argc, char *argv[]) {
   return 0;
 }
 
-void _aggregate_workload(int cardinality, int numGroupBy){
+void _aggregate_workload(AggregateType t, int cardinality, int numGroupBy, int scaleFactor){
 
-  aggregateWorkload = new AggregateWorkload(cardinality, numGroupBy);
+  aggregateWorkload = new AggregateWorkload(cardinality, numGroupBy, scaleFactor);
   if constexpr (DEBUG) {
     aggregateWorkload->setPrint(true);
   }
   aggregateWorkload->prepareData();
-  aggregateWorkload->q1(AggregateType::HASH_AGGREGATE);
+  aggregateWorkload->q1(t);
 
-  aggregateWorkload = new AggregateWorkload(cardinality, numGroupBy);
-  if constexpr (DEBUG) {
-    aggregateWorkload->setPrint(true);
-  }
-  aggregateWorkload->prepareData();
-  aggregateWorkload->q1(AggregateType::ARROW_AGGREGATE);
 }
 
 int aggregate_main(int argc, char *argv[]) {
 
-  for (int cardinality = 1; cardinality <= 8; cardinality++) {
-    for (int numGroupBy = 1; numGroupBy <= 8; numGroupBy++) {
-      _aggregate_workload(cardinality, numGroupBy);
+  for (int p = 0; p < 2; ++p) {
+    AggregateType t = HASH_AGGREGATE;
+    switch (p) {
+      case 0:
+        t = HASH_AGGREGATE; break;
+      case 1:
+        t = ARROW_AGGREGATE; break;
+      default: assert(false); break;
+    }
+    for (int cardinality = 1; cardinality <= 8; cardinality++) {
+      for (int numGroupBy = 1; numGroupBy <= 8; numGroupBy++) {
+        for (int scaleFactor = 1; scaleFactor <= 100000000; scaleFactor *= 10){
+          _aggregate_workload(
+            t, cardinality, numGroupBy, scaleFactor);
+        }
+      }
     }
   }
+
+
 
   return 0;
 }
