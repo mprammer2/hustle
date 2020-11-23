@@ -320,7 +320,8 @@ int ssb_main(int argc, char *argv[]) {
   return 0;
 }
 
-void _aggregate_workload(AggregateType t, int cardinality, int numGroupBy, int scaleFactor){
+void aggregate_workload(
+  AggregateType t, int cardinality, int numGroupBy, size_t scaleFactor){
 
   aggregateWorkload = new AggregateWorkload(cardinality, numGroupBy, scaleFactor);
   if constexpr (DEBUG) {
@@ -344,8 +345,8 @@ int aggregate_main(int argc, char *argv[]) {
     }
     for (int cardinality = 1; cardinality <= 8; cardinality++) {
       for (int numGroupBy = 1; numGroupBy <= 8; numGroupBy++) {
-        for (int scaleFactor = 1; scaleFactor <= 100000000; scaleFactor *= 10){
-          _aggregate_workload(
+        for (size_t scaleFactor = 1; scaleFactor <= 10000000; scaleFactor *= 10){
+          aggregate_workload(
             t, cardinality, numGroupBy, scaleFactor);
         }
       }

@@ -31,7 +31,7 @@ class AggregateWorkload {
 public:
 
 
-  explicit AggregateWorkload(int cardinality, int numGroupby, int scaleFactor);
+  explicit AggregateWorkload(int cardinality, int numGroupby, size_t scaleFactor);
 
   void setPrint(bool shouldPrint){ print_ = shouldPrint;}
 
@@ -50,7 +50,7 @@ private:
   int cardinality;
   int num_group_by;
   int num_threads_;
-  int scale_factor_;
+  size_t scale_factor_;
   std::shared_ptr<Scheduler> scheduler;
 
   std::shared_ptr<OperatorOptions> aggregate_options;

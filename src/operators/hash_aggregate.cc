@@ -653,7 +653,9 @@ void HashAggregate::Finish(Task *ctx) {
     switch (group_by_type_id) {
       case arrow::Type::STRING : {
         arrow::StringBuilder builder;
-        builder.Reserve(tuple_map->size());
+        if (!builder.Reserve(tuple_map->size()).ok()){
+          throw;
+        }
         for (auto const it: *tuple_map) {
           int chunk_id, item_index;
           auto hash_key = it.first;
@@ -715,7 +717,9 @@ void HashAggregate::Finish(Task *ctx) {
     case COUNT: {
       auto map = static_cast<HashMap *>(global_map);
       arrow::Int64Builder builder;
-      builder.Reserve(tuple_map->size());
+      if (!builder.Reserve(tuple_map->size()).ok()){
+        throw;
+      }
       for (auto const it: *tuple_map) {
         auto hash_key = it.first;
         auto value = map->find(hash_key)->second;
@@ -732,7 +736,9 @@ void HashAggregate::Finish(Task *ctx) {
     case MEAN: {
       auto map = static_cast<MeanHashMap *>(global_map);
       arrow::DoubleBuilder builder;
-      builder.Reserve(tuple_map->size());
+      if (!builder.Reserve(tuple_map->size()).ok()){
+        throw;
+      }
       for (auto const it: *tuple_map) {
         int chunk_id, item_index;
         auto hash_key = it.first;

@@ -21,7 +21,7 @@
 
 namespace hustle::operators {
 
-AggregateWorkload::AggregateWorkload(int cardinality, int numGroupby, int scaleFactor) {
+AggregateWorkload::AggregateWorkload(int cardinality, int numGroupby, size_t scaleFactor) {
 
   this->cardinality = cardinality;
   this->num_group_by = numGroupby;
@@ -48,7 +48,9 @@ void AggregateWorkload::prepareData() {
     std::shared_ptr<arrow::Int64Array> col;
 
     arrow::Int64Builder builder;
-    builder.Reserve(cardinality * scale_factor_);
+    if (!builder.Reserve(cardinality * scale_factor_).ok()){
+      throw;
+    }
 
     for (int j = 0; j < cardinality; ++j) {
       for (int k = 0; k < scale_factor_; ++k) {
@@ -99,7 +101,7 @@ void AggregateWorkload::q1(AggregateType agg_type) {
     output_refs.push_back({nullptr, name});
   }
 
-  BaseAggregate *agg_op = get_agg_op(
+  auto agg_op = get_agg_op(
     0, agg_type, input_, out_result,
     {agg_ref}, group_by_refs, group_by_refs,
     aggregate_options);
