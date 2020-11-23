@@ -338,9 +338,9 @@ int aggregate_main(int argc, char *argv[]) {
     AggregateType t = HASH_AGGREGATE;
     switch (p) {
       case 0:
-        t = HASH_AGGREGATE; break;
-      case 1:
         t = ARROW_AGGREGATE; break;
+      case 1:
+        t = HASH_AGGREGATE; break;
       default: assert(false); break;
     }
     for (int cardinality = 1; cardinality <= 8; cardinality++) {
