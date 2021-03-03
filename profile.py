@@ -80,11 +80,11 @@ out_params = {
 execute_str = \
     "sudo touch /mydata/params.json;" + \
     "sudo chmod +777 /mydata/params.json;" + \
-    "echo " + json.dumps(out_params) + " > /mydata/params.json;"\
+    "echo '" + json.dumps(out_params) + "' > /mydata/params.json;"\
     "sudo chmod +777 /local/repository/scripts/cloudlab/cloudlab_setup.sh;" + \
     "/local/repository/scripts/cloudlab/cloudlab_setup.sh " + str(params.scale_factor) + ";" + \
     "sudo chmod +777 /mydata/repo/scripts/cloudlab/cloudlab.py;" + \
-    "python3 /mydata/repo/scripts/cloudlab/cloudlab.py /mydata/params.json >> /mydata/report.txt;"
+    "python3 /mydata/repo/scripts/cloudlab/cloudlab.py >> /mydata/report.txt;"
 node.addService(pg.Execute(shell="bash", command=execute_str))
 
 rspec.addResource(node)
