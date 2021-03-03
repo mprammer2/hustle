@@ -36,11 +36,11 @@ pc = portal.Context()
 pc.defineParameter("hardware", "Hardware (Default: c220g5)", portal.ParameterType.STRING, "c220g5")
 pc.defineParameter("storage", "Storage Size (Default: 100GB)", portal.ParameterType.STRING, "100GB")
 pc.defineParameter("scale_factor", "SSB Scale Factor (Default: 1)", portal.ParameterType.INTEGER, 1)
-pc.defineParameter("experiment_1_flags", "Experiment 1 Flags (Default: \"\"", portal.ParameterType.STRING, "")
-pc.defineParameter("experiment_2_flags", "Experiment 2 Flags (Default: \"\"", portal.ParameterType.STRING, "")
-pc.defineParameter("experiment_3_flags", "Experiment 3 Flags (Default: \"\"", portal.ParameterType.STRING, "")
-pc.defineParameter("experiment_4_flags", "Experiment 4 Flags (Default: \"\"", portal.ParameterType.STRING, "")
-pc.defineParameter("experiment_5_flags", "Experiment 5 Flags (Default: \"\"", portal.ParameterType.STRING, "")
+pc.defineParameter("experiment_1_flags", "Experiment 1 Flags (Default: \"\")", portal.ParameterType.STRING, "")
+pc.defineParameter("experiment_2_flags", "Experiment 2 Flags (Default: \"\")", portal.ParameterType.STRING, "")
+pc.defineParameter("experiment_3_flags", "Experiment 3 Flags (Default: \"\")", portal.ParameterType.STRING, "")
+pc.defineParameter("experiment_4_flags", "Experiment 4 Flags (Default: \"\")", portal.ParameterType.STRING, "")
+pc.defineParameter("experiment_5_flags", "Experiment 5 Flags (Default: \"\")", portal.ParameterType.STRING, "")
 
 params = portal.context.bindParameters()
 
@@ -84,7 +84,7 @@ execute_str = \
     "sudo chmod +777 /local/repository/scripts/cloudlab/cloudlab_setup.sh;" + \
     "/local/repository/scripts/cloudlab/cloudlab_setup.sh " + str(params.scale_factor) + ";" + \
     "sudo chmod +777 /mydata/repo/scripts/cloudlab/cloudlab.py;" + \
-    "/mydata/repo/scripts/cloudlab/cloudlab.py " + json.dumps(out_params) + " >> /mydata/report.txt;"
+    "python3 /mydata/repo/scripts/cloudlab/cloudlab.py /mydata/params.json >> /mydata/report.txt;"
 node.addService(pg.Execute(shell="bash", command=execute_str))
 
 rspec.addResource(node)

@@ -7,6 +7,7 @@ import os
 
 time_format = "%Y-%m-%d %H:%M:%S"
 
+PARAMS_FILE = "/mydata/params.json"
 REPO_DIR = "/mydata/repo/"
 RESULT_DIR = "/mydata/results/"
 HUSTLE_BUILD_DIR = "build_release/"
@@ -44,8 +45,8 @@ def parse_bench_out(a_experiment_num, str_output):
 if __name__ == '__main__':
     print(datetime.datetime.now().strftime(time_format) + " | Starting Automated Cloudlab Benchmark.")
     print(datetime.datetime.now().strftime(time_format) + " | Loading parameters...")
-    json_str = sys.argv[1]
-    args = json.loads(json_str)
+    with open(PARAMS_FILE, 'r') as json_file:
+        args = json.load(json_file)
     experiments = [
         args["experiment_1_flags"],
         args["experiment_2_flags"],
