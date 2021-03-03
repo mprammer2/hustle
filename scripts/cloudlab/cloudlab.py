@@ -70,7 +70,7 @@ if __name__ == '__main__':
     experiment_results.append(parse_bench_out("default", str(proc_out, 'utf-8')))
     print(datetime.datetime.now().strftime(time_format) + " | Starting numbered experiments...")
     for experiment_flags, experiment_num in zip(experiments, [1, 2, 3, 4, 5]):
-        if experiment_flags != "":
+        if experiment_flags != "skip":
             flag_list = experiment_flags.split(" ")
             command = [SSB_BENCHMARK_PATH]
             command.extend(SSB_BENCHMARK_DEFAULT_ARGS)
