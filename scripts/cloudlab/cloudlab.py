@@ -42,7 +42,7 @@ def parse_bench_out(a_experiment_num, str_output):
 
 
 if __name__ == '__main__':
-    print(datetime.datetime.now().strftime(time_format) + " | Starting benchmarking script...")
+    print(datetime.datetime.now().strftime(time_format) + " | Starting Automated Cloudlab Benchmark.")
     print(datetime.datetime.now().strftime(time_format) + " | Loading parameters...")
     json_str = sys.argv[1]
     args = json.loads(json_str)
@@ -53,6 +53,11 @@ if __name__ == '__main__':
         args["experiment_4_flags"],
         args["experiment_5_flags"],
     ]
+    print(datetime.datetime.now().strftime(time_format) + " | Machine Parameters:")
+    print(datetime.datetime.now().strftime(time_format) + " | Hardware: " + str(args['hardware']))
+    print(datetime.datetime.now().strftime(time_format) + " | Storage Size: " + str(args['storage']))
+    print(datetime.datetime.now().strftime(time_format) + " | scale_factor: " + str(args['scale_factor']))
+    print(datetime.datetime.now().strftime(time_format) + " | Starting benchmarking script...")
     print(datetime.datetime.now().strftime(time_format) + " | Starting Experiments...")
     experiment_results = []
     print(datetime.datetime.now().strftime(time_format) + " | Starting default experiment...")
