@@ -76,17 +76,16 @@ out_params = {
     "experiment_4_flags": params.experiment_4_flags,
     "experiment_5_flags": params.experiment_5_flags,
 }
-
+json_str = "\'" + json.dumps(out_params).replace("\'", "'\"'\"'") + "\'"
 
 execute_str = \
     "sudo touch /mydata/params.json;" + \
     "sudo chmod +777 /mydata/params.json;" + \
-    "echo " + json.dumps(out_params).replace('"', '\\"').replace("\'", "\\'") + " > /mydata/params.json;" + \
+    "echo " + json_str + " > /mydata/params.json;" + \
     "sudo chmod +777 /local/repository/scripts/cloudlab/cloudlab_setup.sh;" + \
     "/local/repository/scripts/cloudlab/cloudlab_setup.sh " + str(params.scale_factor) + ";" + \
     "sudo chmod +777 /mydata/repo/scripts/cloudlab/cloudlab.py;" + \
     "python3 /mydata/repo/scripts/cloudlab/cloudlab.py >> /mydata/report.txt;"
-
 node.addService(pg.Execute(shell="bash", command=execute_str))
 
 rspec.addResource(node)
