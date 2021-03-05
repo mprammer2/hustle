@@ -18,9 +18,9 @@
 """Hustle Cloudlab Repeatable Experiment Profile
 
 Default behavior:
-By default, this uses a c220g5 with 100GB and runs experiments at scale factor 1.
-A baseline experiment is always run before numbered experiments.
-Numbered experiments will not be run unless provided with one or more flags to use.
+By default, this uses a c220g5 with 100GB of storage and runs experiments at scale factor 1.
+Numbered experiments will not be run unless provided with one or more arguments to use.
+A common argument can be provided that will precede all per-experiment arguments.
 Storage size may need to be increased for larger scale factors.
 
 Instructions:

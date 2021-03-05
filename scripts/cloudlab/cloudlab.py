@@ -53,11 +53,11 @@ if __name__ == '__main__':
     print(datetime.datetime.now().strftime(time_format) + " | Parameters loaded. Printing: ")
     pprinter.pprint(args)
     experiments = [
-        args["experiment_1_flags"],
-        args["experiment_2_flags"],
-        args["experiment_3_flags"],
-        args["experiment_4_flags"],
-        args["experiment_5_flags"],
+        args["experiment_1_args"],
+        args["experiment_2_args"],
+        args["experiment_3_args"],
+        args["experiment_4_args"],
+        args["experiment_5_args"],
     ]
     print(datetime.datetime.now().strftime(time_format) + " | Machine Parameters:")
     print(datetime.datetime.now().strftime(time_format) + " | Hardware: " + str(args['hardware']))
@@ -67,12 +67,12 @@ if __name__ == '__main__':
     print(datetime.datetime.now().strftime(time_format) + " | Starting Experiments...")
     experiment_results = []
     print(datetime.datetime.now().strftime(time_format) + " | Starting numbered experiments...")
-    for experiment_flags, experiment_num in zip(experiments, [1, 2, 3, 4, 5]):
-        if experiment_flags != "skip":
+    for experiment_args, experiment_num in zip(experiments, [1, 2, 3, 4, 5]):
+        if experiment_args != "skip":
             command = [SSB_BENCHMARK_PATH]
             if str(args['common_args']) != 'skip':
                 command.extend(str(args['common_args']).split(" "))
-            command.extend(experiment_flags.split(" "))
+            command.extend(experiment_args.split(" "))
             print(
                 datetime.datetime.now().strftime(time_format) + " | Starting Experiment #" + str(experiment_num) + "..."
             )
