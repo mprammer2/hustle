@@ -78,6 +78,7 @@ out_params = {
     "hardware": params.hardware,
     "storage": params.storage,
     "scale_factor": params.scale_factor,
+    "common_args": params.common_args,
     "experiment_1_args": params.experiment_1_args,
     "experiment_2_args": params.experiment_2_args,
     "experiment_3_args": params.experiment_3_args,
