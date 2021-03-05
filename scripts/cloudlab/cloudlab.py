@@ -17,7 +17,6 @@ RESULT_DIR = "/mydata/results/"
 HUSTLE_BUILD_DIR = "build_release/"
 SSB_BENCHMARK_DIR = REPO_DIR + HUSTLE_BUILD_DIR + "src/benchmark/"
 SSB_BENCHMARK_PATH = SSB_BENCHMARK_DIR + "hustle_src_benchmark_main"
-SSB_BENCHMARK_DEFAULT_ARGS = ["ssb", "hash-aggregate"]
 
 os.chdir(SSB_BENCHMARK_DIR)
 
@@ -67,24 +66,17 @@ if __name__ == '__main__':
     print(datetime.datetime.now().strftime(time_format) + " | Starting benchmarking script...")
     print(datetime.datetime.now().strftime(time_format) + " | Starting Experiments...")
     experiment_results = []
-    print(datetime.datetime.now().strftime(time_format) + " | Starting default experiment...")
-    default_command = [SSB_BENCHMARK_PATH]
-    default_command.extend(SSB_BENCHMARK_DEFAULT_ARGS)
-    process = subprocess.Popen(default_command, shell=True)
-    process.wait()
-    proc_out, proc_err = process.communicate()
-    experiment_results.append(parse_bench_out("default", str(proc_out, 'utf-8')))
     print(datetime.datetime.now().strftime(time_format) + " | Starting numbered experiments...")
     for experiment_flags, experiment_num in zip(experiments, [1, 2, 3, 4, 5]):
         if experiment_flags != "skip":
-            flag_list = experiment_flags.split(" ")
             command = [SSB_BENCHMARK_PATH]
-            command.extend(SSB_BENCHMARK_DEFAULT_ARGS)
-            command.extend(flag_list)
+            if str(args['common_args']) != 'skip':
+                command.extend(str(args['common_args']).split(" "))
+            command.extend(experiment_flags.split(" "))
             print(
                 datetime.datetime.now().strftime(time_format) + " | Starting Experiment #" + str(experiment_num) + "..."
             )
-            print(datetime.datetime.now().strftime(time_format) + " | Experiment Flags: " + experiment_flags)
+            print(datetime.datetime.now().strftime(time_format) + " | Experiment Command: " + ' '.join(command))
             process = subprocess.Popen(command, shell=True)
             process.wait()
             proc_out, proc_err = process.communicate()

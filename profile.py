@@ -41,11 +41,14 @@ pc = portal.Context()
 pc.defineParameter("hardware", "Hardware (Default: c220g5)", portal.ParameterType.STRING, "c220g5")
 pc.defineParameter("storage", "Storage Size (Default: 100GB)", portal.ParameterType.STRING, "100GB")
 pc.defineParameter("scale_factor", "SSB Scale Factor (Default: 1)", portal.ParameterType.INTEGER, 1)
-pc.defineParameter("experiment_1_flags", "Experiment 1 Flags (Default: \"skip\")", portal.ParameterType.STRING, "skip")
-pc.defineParameter("experiment_2_flags", "Experiment 2 Flags (Default: \"skip\")", portal.ParameterType.STRING, "skip")
-pc.defineParameter("experiment_3_flags", "Experiment 3 Flags (Default: \"skip\")", portal.ParameterType.STRING, "skip")
-pc.defineParameter("experiment_4_flags", "Experiment 4 Flags (Default: \"skip\")", portal.ParameterType.STRING, "skip")
-pc.defineParameter("experiment_5_flags", "Experiment 5 Flags (Default: \"skip\")", portal.ParameterType.STRING, "skip")
+pc.defineParameter("common_args",
+                   "Common Experiment Args (Default: \"ssb hash-aggregate\", replace with \"skip\" if not in use.)",
+                   portal.ParameterType.STRING, "ssb hash-aggregate")
+pc.defineParameter("experiment_1_args", "Experiment 1 Args (Default: \"skip\")", portal.ParameterType.STRING, "skip")
+pc.defineParameter("experiment_2_args", "Experiment 2 Args (Default: \"skip\")", portal.ParameterType.STRING, "skip")
+pc.defineParameter("experiment_3_args", "Experiment 3 Args (Default: \"skip\")", portal.ParameterType.STRING, "skip")
+pc.defineParameter("experiment_4_args", "Experiment 4 Args (Default: \"skip\")", portal.ParameterType.STRING, "skip")
+pc.defineParameter("experiment_5_args", "Experiment 5 Args (Default: \"skip\")", portal.ParameterType.STRING, "skip")
 
 params = portal.context.bindParameters()
 
@@ -75,11 +78,11 @@ out_params = {
     "hardware": params.hardware,
     "storage": params.storage,
     "scale_factor": params.scale_factor,
-    "experiment_1_flags": params.experiment_1_flags,
-    "experiment_2_flags": params.experiment_2_flags,
-    "experiment_3_flags": params.experiment_3_flags,
-    "experiment_4_flags": params.experiment_4_flags,
-    "experiment_5_flags": params.experiment_5_flags,
+    "experiment_1_args": params.experiment_1_args,
+    "experiment_2_args": params.experiment_2_args,
+    "experiment_3_args": params.experiment_3_args,
+    "experiment_4_args": params.experiment_4_args,
+    "experiment_5_args": params.experiment_5_args,
 }
 enc_str = url_parser.quote_plus((json.dumps(out_params, separators=(',', ':'))))
 
@@ -90,7 +93,7 @@ execute_str = \
     "sudo chmod +777 /local/repository/scripts/cloudlab/cloudlab_setup.sh;" + \
     "/local/repository/scripts/cloudlab/cloudlab_setup.sh " + str(params.scale_factor) + ";" + \
     "sudo chmod +777 /mydata/repo/scripts/cloudlab/cloudlab.py;" + \
-    "python3 /mydata/repo/scripts/cloudlab/cloudlab.py >> /mydata/report.txt;"
+    "python3 /mydata/repo/scripts/cloudlab/cloudlab.py >> /mydata/report.txt 2>&1;"
 node.addService(pg.Execute(shell="bash", command=execute_str))
 
 rspec.addResource(node)
