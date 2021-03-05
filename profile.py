@@ -76,7 +76,10 @@ out_params = {
     "experiment_4_flags": params.experiment_4_flags,
     "experiment_5_flags": params.experiment_5_flags,
 }
-json_str = "\'" + json.dumps(out_params).replace("\'", "'\"'\"'") + "\'"
+json_str = "'" + json.dumps(
+    out_params,
+    separators=(',', ':')
+).replace("'", "'\"'\"'") + "'"
 
 execute_str = \
     "sudo touch /mydata/params.json;" + \
