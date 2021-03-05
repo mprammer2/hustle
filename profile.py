@@ -77,19 +77,16 @@ out_params = {
     "experiment_5_flags": params.experiment_5_flags,
 }
 
-try:
-    from shlex import quote as shell_escape_str
-except ImportError:
-    from pipes import quote as shell_escape_str
 
 execute_str = \
     "sudo touch /mydata/params.json;" + \
     "sudo chmod +777 /mydata/params.json;" + \
-    "echo " + shell_escape_str(json.dumps(out_params)) + " > /mydata/params.json;"\
+    "echo " + json.dumps(out_params).replace('"', '\\"').replace("\'", "\\'") + " > /mydata/params.json;" + \
     "sudo chmod +777 /local/repository/scripts/cloudlab/cloudlab_setup.sh;" + \
     "/local/repository/scripts/cloudlab/cloudlab_setup.sh " + str(params.scale_factor) + ";" + \
     "sudo chmod +777 /mydata/repo/scripts/cloudlab/cloudlab.py;" + \
     "python3 /mydata/repo/scripts/cloudlab/cloudlab.py >> /mydata/report.txt;"
+
 node.addService(pg.Execute(shell="bash", command=execute_str))
 
 rspec.addResource(node)
