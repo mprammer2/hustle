@@ -84,8 +84,7 @@ if __name__ == '__main__':
                 datetime.datetime.now().strftime(time_format) + " | Starting Experiment #" + str(experiment_num) + "..."
             )
             print(datetime.datetime.now().strftime(time_format) + " | Experiment Command: " + ' '.join(command))
-            process = subprocess.Popen(command, shell=True)
-            process.wait()
+            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             proc_out, proc_err = process.communicate()
             proc_out_str = safe_str_enc(proc_out)
             proc_err_str = safe_str_enc(proc_err)
@@ -98,7 +97,7 @@ if __name__ == '__main__':
             experiment_results.append(parse_bench_out(experiment_num, proc_out_str))
     print(datetime.datetime.now().strftime(time_format) + " | Experiments finished.")
     print(datetime.datetime.now().strftime(time_format) + " | Saving results...")
-    with open(RESULT_DIR + "report.csv") as a_file:
+    with open(RESULT_DIR + "report.csv", 'w', newline='') as a_file:
         csv_writer = csv.writer(a_file)
         csv_writer.writerow(("experiment number", "query", "time (ns)", "cpu time (ns)", "iterations"))
         for a_result in experiment_results:
