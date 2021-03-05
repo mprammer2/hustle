@@ -1,9 +1,13 @@
 import json
 import sys
+import pprint
+import urllib.parse
 import subprocess
 import datetime
 import csv
 import os
+
+pprinter = pprint.PrettyPrinter(indent=2)
 
 time_format = "%Y-%m-%d %H:%M:%S"
 
@@ -46,7 +50,9 @@ if __name__ == '__main__':
     print(datetime.datetime.now().strftime(time_format) + " | Starting Automated Cloudlab Benchmark.")
     print(datetime.datetime.now().strftime(time_format) + " | Loading parameters...")
     with open(PARAMS_FILE, 'r') as json_file:
-        args = json.load(json_file)
+        args = json.loads(urllib.parse.unquote_plus(json_file.readline()))
+    print(datetime.datetime.now().strftime(time_format) + " | Parameters loaded. Printing: ")
+    pprinter.pprint(args)
     experiments = [
         args["experiment_1_flags"],
         args["experiment_2_flags"],

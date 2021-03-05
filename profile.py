@@ -31,6 +31,7 @@ import geni.portal as portal
 import geni.rspec.pg as pg
 
 import json
+import urllib.parse
 
 pc = portal.Context()
 pc.defineParameter("hardware", "Hardware (Default: c220g5)", portal.ParameterType.STRING, "c220g5")
@@ -76,15 +77,12 @@ out_params = {
     "experiment_4_flags": params.experiment_4_flags,
     "experiment_5_flags": params.experiment_5_flags,
 }
-json_str = "'" + json.dumps(
-    out_params,
-    separators=(',', ':')
-).replace("'", "'\"'\"'") + "'"
+enc_str = urllib.parse.quote_plus((json.dumps(out_params, separators=(',', ':'))))
 
 execute_str = \
     "sudo touch /mydata/params.json;" + \
     "sudo chmod +777 /mydata/params.json;" + \
-    "echo " + json_str + " > /mydata/params.json;" + \
+    "echo " + enc_str + " > /mydata/params.json;" + \
     "sudo chmod +777 /local/repository/scripts/cloudlab/cloudlab_setup.sh;" + \
     "/local/repository/scripts/cloudlab/cloudlab_setup.sh " + str(params.scale_factor) + ";" + \
     "sudo chmod +777 /mydata/repo/scripts/cloudlab/cloudlab.py;" + \
