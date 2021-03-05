@@ -31,7 +31,11 @@ import geni.portal as portal
 import geni.rspec.pg as pg
 
 import json
-import urllib.parse
+
+try:
+    import urllib.parse as url_parser
+except ImportError:
+    import urllib as url_parser
 
 pc = portal.Context()
 pc.defineParameter("hardware", "Hardware (Default: c220g5)", portal.ParameterType.STRING, "c220g5")
@@ -77,7 +81,7 @@ out_params = {
     "experiment_4_flags": params.experiment_4_flags,
     "experiment_5_flags": params.experiment_5_flags,
 }
-enc_str = urllib.parse.quote_plus((json.dumps(out_params, separators=(',', ':'))))
+enc_str = url_parser.quote_plus((json.dumps(out_params, separators=(',', ':'))))
 
 execute_str = \
     "sudo touch /mydata/params.json;" + \
