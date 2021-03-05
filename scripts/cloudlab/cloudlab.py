@@ -45,6 +45,13 @@ def parse_bench_out(a_experiment_num, str_output):
     return out
 
 
+def safe_str_enc(a_str):
+    if a_str is None:
+        return ''
+    else:
+        return str(a_str, 'utf-8')
+
+
 if __name__ == '__main__':
     print(datetime.datetime.now().strftime(time_format) + " | Starting Automated Cloudlab Benchmark.")
     print(datetime.datetime.now().strftime(time_format) + " | Loading parameters...")
@@ -80,7 +87,15 @@ if __name__ == '__main__':
             process = subprocess.Popen(command, shell=True)
             process.wait()
             proc_out, proc_err = process.communicate()
-            experiment_results.append(parse_bench_out(experiment_num, str(proc_out, 'utf-8')))
+            proc_out_str = safe_str_enc(proc_out)
+            proc_err_str = safe_str_enc(proc_err)
+            print(datetime.datetime.now().strftime(time_format) + " | Experiment Output:")
+            print(proc_out_str)
+            print(datetime.datetime.now().strftime(time_format) + " | Experiment Error:")
+            print(proc_err_str)
+            print(datetime.datetime.now().strftime(time_format) + " | Experiment Return Code:")
+            print(process.returncode)
+            experiment_results.append(parse_bench_out(experiment_num, proc_out_str))
     print(datetime.datetime.now().strftime(time_format) + " | Experiments finished.")
     print(datetime.datetime.now().strftime(time_format) + " | Saving results...")
     with open(RESULT_DIR + "report.csv") as a_file:
