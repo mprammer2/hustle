@@ -24,24 +24,29 @@ os.chdir(SSB_BENCHMARK_DIR)
 def parse_bench_out(a_experiment_num, str_output):
     out = []
     str_experiment_num = str(a_experiment_num)  # allow inputs that convert to string
-    str_arr = str_output.split("\\n")
+    str_arr = str_output.split("\n")
     # sample line:
     # query11      41149293 ns      2607978 ns          100
+    found_output = False
     for a_str in str_arr:
-        if a_str.find("query") != -1:
-            str_list = a_str.split()  # split on all whitespace
-            if len(str_list) == 6:
-                query = str_list[0]
-                time_ns = str_list[1]
-                cpu_ns = str_list[3]
-                iterations = str_list[5]
-                out.append((
-                    experiment_num,
-                    query,
-                    time_ns,
-                    cpu_ns,
-                    iterations
-                ))
+        if found_output:
+            if a_str.find("query") != -1:
+                str_list = a_str.split()  # split on all whitespace
+                if len(str_list) == 6:
+                    query = str_list[0]
+                    time_ns = str_list[1]
+                    cpu_ns = str_list[3]
+                    iterations = str_list[5]
+                    out.append((
+                        experiment_num,
+                        query,
+                        time_ns,
+                        cpu_ns,
+                        iterations
+                    ))
+        else:
+            if a_str.find("------") != -1:
+                found_output = True
     return out
 
 
